@@ -10,9 +10,8 @@ const router = new express.Router()
 //Add Transactions
 router.post('/transactions',auth, async (req, res) => {
     try {
-      const { amount,category } = req.body;
+      const { amount,category, date} = req.body;
      const userId = req.user.id; 
-     const date= new Date();
       const transaction = await Transaction.create({ amount, category, userId, date});
       res.status(201).json(transaction);
     } catch (error) {

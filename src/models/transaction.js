@@ -1,5 +1,3 @@
-const User=require('./user')
-
 module.exports = (sequelize, DataTypes) => {
     const Transaction = sequelize.define("transaction", {
          amount: {
@@ -8,7 +6,7 @@ module.exports = (sequelize, DataTypes) => {
           },
           date: {
             type: DataTypes.DATE,
-            allowNull: true,
+            allowNull: false,
           },
           category: {
             type: DataTypes.ENUM('income', 'expense'),

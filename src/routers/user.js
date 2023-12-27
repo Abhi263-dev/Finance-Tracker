@@ -29,7 +29,11 @@ router.post('/users/register',async (req,res)=>{
         //newUser.tokens.push({ token });
           await newUser.save();
 
-        res.status(201).json({ message: 'User registered successfully', token, user: newUser });
+          const sanitizedUser = await User.findByPk(newUser.id, {
+            attributes: { exclude: ['tokens'] },
+          });
+
+        res.status(201).json({ message: 'User registered successfully', token, user: sanitizedUser });
       } catch (error) {
         console.error('Error registering user:', error);
         res.status(500).json({ message: 'Internal Server Error' });
@@ -70,7 +74,7 @@ router.post('/users/login',async(req,res)=>{
 
 })
 
-
+//Get authnticated users
 router.get('/users',auth,async(req,res)=>{
     try{
           res.send(req.user)

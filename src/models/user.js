@@ -1,5 +1,4 @@
 const jwt = require("jsonwebtoken");
-const Transaction=require("./transaction")
 
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define("user", {

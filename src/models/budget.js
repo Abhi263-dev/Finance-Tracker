@@ -15,4 +15,3 @@ module.exports = (sequelize, DataTypes) => {
     })
     return Budget;
 };
-
