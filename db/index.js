@@ -22,10 +22,16 @@ db.sequelize=sequelize
 db.Sequelize = Sequelize
 db.user=require('../src/models/user')(sequelize, DataTypes)
 db.transaction=require('../src/models/transaction')(sequelize,DataTypes)
+db.budget=require('../src/models/budget')(sequelize, DataTypes)
 
 //one to many relationship between users and transactions
 db.user.hasMany(db.transaction, {foreignKey: 'userId'})
 db.transaction.belongsTo(db.user, {foreignKey: 'userId'})
+
+//one to one realtionship between user and budget
+
+db.user.hasOne(db.budget, {foreignKey: 'userId'})
+db.budget.belongsTo(db.user, {foreignKey: 'userId'})
 
 sequelize.sync()
   .then(() => {

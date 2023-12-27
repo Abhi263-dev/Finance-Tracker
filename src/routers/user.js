@@ -1,6 +1,6 @@
 const db = require('../../db/index')
 const User = db.user
-
+const auth=require('../../middleware/auth')
 const express =require('express')
 const bcrypt = require('bcrypt');
 const jwt=require('jsonwebtoken')
@@ -68,6 +68,17 @@ router.post('/users/login',async(req,res)=>{
     res.status(500).json({ message: 'Internal Server Error' });
   }
 
+})
+
+
+router.get('/users',auth,async(req,res)=>{
+    try{
+          res.send(req.user)
+    }
+    catch(e)
+    {
+        res.send(e)
+    }
 })
 
 module.exports = router;

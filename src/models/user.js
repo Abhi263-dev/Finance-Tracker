@@ -47,7 +47,7 @@ module.exports = (sequelize, DataTypes) => {
 
   User.prototype.generateToken = async function () {
     const user = this
-    const token = jwt.sign({ id: user.id.toString() }, 'hamehihun', { expiresIn: '1h' });
+    const token = jwt.sign({ id: user.id.toString() }, 'hamehihun');
     return token;
 
   };
