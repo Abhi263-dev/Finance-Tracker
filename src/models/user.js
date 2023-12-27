@@ -51,10 +51,6 @@ module.exports = (sequelize, DataTypes) => {
     return token;
 
   };
-     
-User.hasMany(Transaction);
-Transaction.belongsTo(User);
-
-
+    
   return User;
 };

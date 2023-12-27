@@ -21,8 +21,11 @@ const db={}
 db.sequelize=sequelize
 db.Sequelize = Sequelize
 db.user=require('../src/models/user')(sequelize, DataTypes)
-db.user=require('../src/models/transaction')(sequelize,DataTypes)
+db.transaction=require('../src/models/transaction')(sequelize,DataTypes)
 
+//one to many relationship between users and transactions
+db.user.hasMany(db.transaction, {foreignKey: 'userId'})
+db.transaction.belongsTo(db.user, {foreignKey: 'userId'})
 
 sequelize.sync()
   .then(() => {
