@@ -21,6 +21,7 @@ const db={}
 db.sequelize=sequelize
 db.Sequelize = Sequelize
 db.user=require('../src/models/user')(sequelize, DataTypes)
+db.user=require('../src/models/transaction')(sequelize,DataTypes)
 
 
 sequelize.sync()

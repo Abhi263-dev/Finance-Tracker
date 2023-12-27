@@ -24,8 +24,10 @@ router.post('/users/register',async (req,res)=>{
     
         const token = await newUser.generateToken();         //generating token
 
-        // newUser.tokens = newUser.tokens.concat({ token });  //saving it to the table
+        newUser.tokens = newUser.tokens.concat({ token });  //saving it to the table
         // await newUser.save();
+        //newUser.tokens.push({ token });
+          await newUser.save();
 
         res.status(201).json({ message: 'User registered successfully', token, user: newUser });
       } catch (error) {
@@ -57,8 +59,8 @@ router.post('/users/login',async(req,res)=>{
     // Generate and send a JWT token upon successful login
     const token =await user.generateToken();
 
-    // user.tokens = user.tokens.concat({ token });  //saving it to the table
-    // await user.save();
+    user.tokens = user.tokens.concat({ token });  //saving it to the table
+    await user.save();
     res.json({ message: 'Login successful', token });
    
   } catch (e) {
@@ -67,6 +69,5 @@ router.post('/users/login',async(req,res)=>{
   }
 
 })
-
 
 module.exports = router;

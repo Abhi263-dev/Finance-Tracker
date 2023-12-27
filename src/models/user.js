@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const Transaction=require("./transaction")
 
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define("user", {
@@ -45,17 +46,15 @@ module.exports = (sequelize, DataTypes) => {
   });
 
   User.prototype.generateToken = async function () {
-    const user = this;
-    const token = jwt.sign({ id: user.id }, "hamehihun");
-    //user.tokens = user.tokens.concat({ token }); //saving it to the table
-    
-    console.log(token)
-
-    user.tokens = [...user.tokens, { token }];
-    await user.save();
-
+    const user = this
+    const token = jwt.sign({ id: user.id.toString() }, 'hamehihun', { expiresIn: '1h' });
     return token;
+
   };
+     
+User.hasMany(Transaction);
+Transaction.belongsTo(User);
+
 
   return User;
 };
