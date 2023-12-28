@@ -4,6 +4,10 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false,
           },
+        year: {
+          type:DataTypes.INTEGER,
+          allowNull: false,
+        },  
          amount: {
             type: DataTypes.FLOAT,
             allowNull: false,

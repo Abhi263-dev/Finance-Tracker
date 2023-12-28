@@ -1,6 +1,10 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 
+const Transaction=require('../models/transaction')
+const Budget=require('../models/budget')
+
+
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define("user", {
     username: {
@@ -98,6 +102,21 @@ module.exports = (sequelize, DataTypes) => {
 
     return user
   }
+
+  //Middleware to delete associated budget and transactions of user
+  User.beforeDestroy(async (user, options) => {
+  
+    try {
+      // Delete associated transactions
+      await Transaction.destroy({ where: { userId: user.id } });
+  
+      // Delete associated budgets
+      await Budget.destroy({ where: { userId: user.id } });
+    } catch (error) {
+      console.error('Error deleting associated transactions and budgets:', error);
+      // Handle the error as needed
+    }
+  });
 
   return User;
 };

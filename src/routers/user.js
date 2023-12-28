@@ -48,8 +48,62 @@ router.post("/users/login", async (req, res) => {
 
 //Get authnticated users
 router.get("/users", auth, async (req, res) => {
-  //console.log('userrrrrrrrrrrr', req.user)
     res.status(200).send(req.user)
 });
+
+//Logout User
+router.post('/users/logout',auth,async(req,res)=>{
+  try {
+    // Get the current user from the authentication middleware
+    const curruser = req.user; // Retrieve the user from the auth middleware
+
+    // Filter out the token to be removed
+
+    const currentTokens = JSON.parse(curruser.tokens);
+    console.log(currentTokens)
+
+    const filteredTokens = currentTokens.filter((token) => {
+      return token.token !== req.token;
+  })
+    // const updatedTokens = curruser.getDataValue('tokens').filter;
+    curruser.tokens = JSON.stringify(filteredTokens);
+
+    // Save the changes to the database
+    await curruser.save();
+    // Update the user's tokens
+    //await User.update({ tokens: updatedTokens }, { where: { id: curruser.id } });
+
+    res.json("Logout successful");
+  } catch (error) {
+    console.error('Error logging out:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+
+})
+
+//Delete user 
+
+router.delete('/users/delete', auth,async (req, res) => {
+   
+       const userId=req.user.id
+  try {
+    // Find the user by ID
+    const user = await User.findByPk(userId);
+
+    // If the user is not found, return a 404 status
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Delete the user
+    await user.destroy();
+
+    res.status(204).json('User Deleted Succesfully'); // Respond with 204 No Content for a successful deletion
+  } catch (error) {
+    console.error('Error deleting user:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 
 module.exports = router;

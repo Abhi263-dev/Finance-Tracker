@@ -10,9 +10,9 @@ const router = new express.Router()
 //Add Transactions
 router.post('/transactions',auth, async (req, res) => {
     try {
-      const { amount,category, date} = req.body;
+      const { amount,category,description, date} = req.body;
      const userId = req.user.id; 
-      const transaction = await Transaction.create({ amount, category, userId, date});
+      const transaction = await Transaction.create({ amount, category, userId, date,description});
       res.status(201).json(transaction);
     } catch (error) {
       console.error('Error creating transaction:', error);
@@ -21,13 +21,23 @@ router.post('/transactions',auth, async (req, res) => {
   });
   
   // Retrieve all transactions for the authenticated user
+  // get transactions based on category /transactions?category=income
   router.get('/transactions', auth, async (req, res) => {
-    const userId = req.user.id; // Assuming auth middleware sets req.user with user information
+    const userId = req.user.id;   // Assuming auth middleware sets req.user with user information
+   
+    const { category } = req.query; 
     try {
-      const transactions = await Transaction.findAll({
-        where: { userId },
-      });
-      res.json(transactions);
+      const whereCondition = { userId };
+    if (category) {
+      whereCondition.category = category;
+    }
+
+    // Retrieve transactions based on the where condition
+    const transactions = await Transaction.findAll({
+      where: whereCondition,
+    });
+
+    res.json(transactions);
     } catch (error) {
       console.error('Error retrieving transactions:', error);
       res.status(500).json({ error: 'Internal Server Error' });
@@ -53,5 +63,8 @@ router.post('/transactions',auth, async (req, res) => {
       res.status(500).json({ error: 'Internal Server Error' });
     }
   });
+
+
+
 
 module.exports=router
