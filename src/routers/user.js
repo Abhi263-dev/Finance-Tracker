@@ -1,88 +1,55 @@
-const db = require('../../db/index')
-const User = db.user
-const auth=require('../../middleware/auth')
-const express =require('express')
-const bcrypt = require('bcrypt');
-const jwt=require('jsonwebtoken')
+const db = require("../../db/index");
+const User = db.user;
+const auth = require("../../middleware/auth");
+const express = require("express");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
-const router = new express.Router()
+const router = new express.Router();
 
 //Register Users
-router.post('/users/register',async (req,res)=>{
-    try{ 
-        const { username, email, password } = req.body;
+router.post("/users/register", async (req, res) => {
+  try {
+    const { username, email, password } = req.body;
 
-        // Hash the password
-        const hashedPassword = await bcrypt.hash(password, 10);
-    
-        // Create a new user
-        const newUser = await User.create({
-          username,
-          email,
-          password: hashedPassword,
-        });
-    
-        const token = await newUser.generateToken();         //generating token
+    // Create a new user
+    const newUser = await User.create({
+      username,
+      email,
+      password,
+    });
 
-        newUser.tokens = newUser.tokens.concat({ token });  //saving it to the table
-        // await newUser.save();
-        //newUser.tokens.push({ token });
-          await newUser.save();
+    const token = await newUser.generateToken(); //generating token
 
-          const sanitizedUser = await User.findByPk(newUser.id, {
-            attributes: { exclude: ['tokens'] },
-          });
-
-        res.status(201).json({ message: 'User registered successfully', token, user: sanitizedUser });
-      } catch (error) {
-        console.error('Error registering user:', error);
-        res.status(500).json({ message: 'Internal Server Error' });
-      }
-})
+    res
+      .status(201)
+      .json({ message: "User registered successfully", newUser, token });
+  } catch (error) {
+    console.error("Error registering user:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
 
 //Login users
 
-router.post('/users/login',async(req,res)=>{
-  try  
-  { const {username,password}=req.body;
-    
-    const user= await User.findOne({ where: { username } });
-   
-    //Check if user exists
-    if (!user) {
-      return res.status(401).json({ message: 'Invalid credentials' });
-    }
+router.post("/users/login", async (req, res) => {
+  try {
+    const { username, password } = req.body;
 
-    // Verify the password
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    const user = await User.findByCredentials(username, password)
+    const token = await user.generateToken();
 
-    if (!isPasswordValid) {
-      return res.status(401).json({ message: 'Invalid credentials' });
-    }
-
-    // Generate and send a JWT token upon successful login
-    const token =await user.generateToken();
-
-    user.tokens = user.tokens.concat({ token });  //saving it to the table
-    await user.save();
-    res.json({ message: 'Login successful', token });
-   
+    res.json({ message: "Login successful", user, token });
   } catch (e) {
-    console.error('Error logging in user:', e);
-    res.status(500).json({ message: 'Internal Server Error' });
+    console.error("Error logging in user:", e);
+    res.status(500).json({ message: "Internal Server Error" });
   }
-
-})
+});
 
 //Get authnticated users
-router.get('/users',auth,async(req,res)=>{
-    try{
-          res.send(req.user)
-    }
-    catch(e)
-    {
-        res.send(e)
-    }
-})
+router.get("/users", auth, async (req, res) => {
+  //console.log('userrrrrrrrrrrr', req.user)
+    res.status(200).send(req.user)
+});
 
 module.exports = router;

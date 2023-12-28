@@ -39,10 +39,10 @@ router.get('/budgets/:month', auth, async (req, res) => {
   
     try {
       // Using the utility function to calculate total expenses and get the budget
-      const { bud, totalExpensesValue } = await calculateTotalExpenses(userId, month);
+      const { bud, totalExpenses } = await calculateTotalExpenses(userId, month);
   
       // Return the results in the response
-      res.json({ Budget: bud, Kharcha: totalExpensesValue });
+      res.json({ Budget: bud, Kharcha: totalExpenses });
     } catch (error) {
       console.error('Error getting expenses and budget:', error);
       res.status(500).json({ error: 'Internal Server Error' });

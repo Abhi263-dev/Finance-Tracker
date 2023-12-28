@@ -17,25 +17,20 @@ const calculateTotalExpenses =async (userId, month)=> {
     }
 
     // Calculate the total expenses for the specified month and user (it is not working )
-    const totalExpenses = await Transaction.findOne({
-        attributes: [
-          [literal('SUM("amount")'), 'totalExpenses']
-        ],
-        where: {
-          userId,
-          category: 'expense',
-          date: {
-            [Op.gte]: new Date(`${month}-01`),
-            [Op.lt]: new Date(new Date(`${month}-01`).setMonth(new Date(`${month}-01`).getMonth() + 1)),
-          },
+    const totalExpenses = await Transaction.sum('amount', {
+      where: {
+        userId,
+        category: 'expense',
+        date: {
+          [Op.gte]: new Date(`${month}-01`),
+          [Op.lt]: new Date(new Date(`${month}-01`).setMonth(new Date(`${month}-01`).getMonth() + 1)),
+          
         },
-      });
-      
-      // Extract the totalExpenses value
-      const totalExpensesValue = totalExpenses.getDataValue('totalExpenses') || 0;
+      },
+    });
 
    console.log(bud)
-    return { bud, totalExpensesValue };
+    return { bud, totalExpenses };
   } catch (error) {
     console.error('Error calculating total expenses:', error);
     throw error;
