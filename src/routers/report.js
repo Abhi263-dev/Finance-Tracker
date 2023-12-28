@@ -66,7 +66,50 @@ const router = new express.Router()
     }
   });
 
-  
+//Custom reports given startdate and enddate 
+
+router.get('/reportcustom', auth, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { startDate, endDate } = req.body;
+
+    // Validate input
+    if (!startDate || !endDate) {
+      return res.status(400).json({ error: 'Both start date and end date are required.' });
+    }
+
+    // Format the dates
+    const formattedStartDate = new Date(startDate);
+    const formattedEndDate = new Date(endDate);
+
+    // Calculate total income and expenses for the specified period
+    const incomeResult = await Transactions.sum('amount', {
+      where: { userId, category: 'income', date: { [Op.between]: [formattedStartDate, formattedEndDate] } },
+    });
+
+    const expenseResult = await Transactions.sum('amount', {
+      where: { userId, category: 'expense', date: { [Op.between]: [formattedStartDate, formattedEndDate] } },
+    });
+
+    const totalIncome = incomeResult || 0;
+    const totalExpense = expenseResult || 0;
+
+    // Prepare and send the financial report for the specified period
+    const report = {
+      totalIncome,
+      totalExpense,
+      // startDate: formattedStartDate.toISOString().split('T')[0],
+      // endDate: formattedEndDate.toISOString().split('T')[0],
+    };
+
+    res.json({ report });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+
   //Function to convert MonthNumber to Name 
   function MonthNumber_Name(monthNumber) {
       const months = [
