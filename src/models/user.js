@@ -37,9 +37,12 @@ module.exports = (sequelize, DataTypes) => {
         },
       },
     },
-
+    bossId: {                   //super userID
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
     tokens: {
-      type: DataTypes.TEXT, // Store the array as a JSON string
+      type: DataTypes.TEXT, // Store the array as a JSON text
       defaultValue: "[]",
       allowNull: false, // Default value as an empty array in string form
       get() {
@@ -114,7 +117,6 @@ module.exports = (sequelize, DataTypes) => {
       await Budget.destroy({ where: { userId: user.id } });
     } catch (error) {
       console.error('Error deleting associated transactions and budgets:', error);
-      // Handle the error as needed
     }
   });
 

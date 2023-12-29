@@ -8,7 +8,7 @@ const router = new express.Router()
   const Budgets = db.budget;
   const Users = db.user;
    
-  const { Op } = require('sequelize');
+  const { Op,literal } = require('sequelize');
       
   // Financial Report generating function 
   //  Get /report Provide budget and expenses of current month and year 
@@ -34,7 +34,21 @@ const router = new express.Router()
       const expenseResult = await Transactions.sum('amount', {
           where: { userId, category: 'expense', date: { [Op.substring]: `${currentYear}-${currentMonth}` } },
         });
-     
+
+        //query of expenses of different descriptions
+        const expensesByDescription = await Transactions.findAll({
+          attributes: [
+            'description',
+            [literal('SUM("amount")'), 'totalAmount'],
+          ],
+          where: {
+            userId,
+            category: 'expense',
+            date: { [Op.substring]: `${currentYear}-${currentMonth}` },
+          },
+          group: ['description'],
+        });
+ 
       const totalIncome = incomeResult || 0;
       const totalExpense = expenseResult || 0;
    
@@ -58,6 +72,7 @@ const router = new express.Router()
         totalExpense,
         budgetAmount,
         remainingBudget,
+        expensesByDescription,
       };
    
       res.json({ report });

@@ -7,28 +7,28 @@ const jwt = require("jsonwebtoken");
 
 const router = new express.Router();
 
-//Register Users
-router.post("/users/register", async (req, res) => {
-  try {
-    const { username, email, password } = req.body;
+//Register Users (User can't register users)
+// router.post("/users/register", async (req, res) => {
+//   try {
+//     const { username, email, password } = req.body;
 
-    // Create a new user
-    const newUser = await User.create({
-      username,
-      email,
-      password,
-    });
+//     // Create a new user                    //Cant create user
+//     // const newUser = await User.create({
+//     //   username,
+//     //   email,
+//     //   password,
+//     // });
 
-    const token = await newUser.generateToken(); //generating token
+//     const token = await newUser.generateToken(); //generating token
 
-    res
-      .status(201)
-      .json({ message: "User registered successfully", newUser, token });
-  } catch (error) {
-    console.error("Error registering user:", error);
-    res.status(500).json({ message: "Internal Server Error" });
-  }
-});
+//     res
+//       .status(201)
+//       .json({ message: "User registered successfully", newUser, token });
+//   } catch (error) {
+//     console.error("Error registering user:", error);
+//     res.status(500).json({ message: "Internal Server Error" });
+//   }
+// });
 
 //Login users
 
@@ -44,11 +44,6 @@ router.post("/users/login", async (req, res) => {
     console.error("Error logging in user:", e);
     res.status(500).json({ message: "Internal Server Error" });
   }
-});
-
-//Get authnticated users
-router.get("/users", auth, async (req, res) => {
-    res.status(200).send(req.user)
 });
 
 //Logout User
@@ -81,29 +76,31 @@ router.post('/users/logout',auth,async(req,res)=>{
 
 })
 
-//Delete user 
+//Delete user (Cant Delete Users)
 
-router.delete('/users/delete', auth,async (req, res) => {
+// router.delete('/users/delete', auth,async (req, res) => {
    
-       const userId=req.user.id
-  try {
-    // Find the user by ID
-    const user = await User.findByPk(userId);
+//        const userId=req.user.id
+//   try {
+//     // Find the user by ID
+//     const user = await User.findByPk(userId);
 
-    // If the user is not found, return a 404 status
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' });
-    }
+//     // If the user is not found, return a 404 status
+//     if (!user) {
+//       return res.status(404).json({ error: 'User not found' });
+//     }
 
-    // Delete the user
-    await user.destroy();
+//     // Delete the user
+//     await user.destroy();
 
-    res.status(204).json('User Deleted Succesfully'); // Respond with 204 No Content for a successful deletion
-  } catch (error) {
-    console.error('Error deleting user:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
+//     res.status(204).json('User Deleted Succesfully'); // Respond with 204 No Content for a successful deletion
+//   } catch (error) {
+//     console.error('Error deleting user:', error);
+//     res.status(500).json({ error: 'Internal Server Error' });
+//   }
+// });
+
+
 
 
 module.exports = router;

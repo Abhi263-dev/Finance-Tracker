@@ -3,6 +3,7 @@ const userRouter = require('./routers/user')
 const transrouter=require('./routers/transaction')
 const Budgetrouter=require('./routers/budget')
 const Reportrouter=require('./routers/report')
+const Superuserrouter=require('./routers/superuser')
 
 const db = require('../db/index')
 
@@ -15,6 +16,7 @@ app.use(userRouter)
 app.use(transrouter)
 app.use(Budgetrouter)
 app.use(Reportrouter)
+app.use(Superuserrouter)
 
 
 app.listen(port,()=>{
