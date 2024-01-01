@@ -5,6 +5,7 @@ const express = require("express");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
+
 const router = new express.Router();
 
 //Register Users (User can't register users)
@@ -99,7 +100,6 @@ router.post('/users/logout',auth,async(req,res)=>{
 //     res.status(500).json({ error: 'Internal Server Error' });
 //   }
 // });
-
 
 
 

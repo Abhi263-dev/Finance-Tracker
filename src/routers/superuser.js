@@ -7,11 +7,12 @@ const superauth = require("../../middleware/superauth");
 const express = require("express");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const log=require("../../middleware/log")
 
 const router = new express.Router();
 
 //Register SuperUsers
-router.post("/superuser/register", async (req, res) => {
+router.post("/superuser/register",log, async (req, res) => {
   try {
     const { username, email, password } = req.body;
 
@@ -39,7 +40,7 @@ router.post("/superuser/register", async (req, res) => {
 
 //Login Superusers
 
-router.post("/superuser/login", async (req, res) => {
+router.post("/superuser/login",log, async (req, res) => {
   try {
     const { username, password } = req.body;
 
@@ -59,12 +60,12 @@ router.post("/superuser/login", async (req, res) => {
 });
 
 //Get authenticated Superusers
-router.get("/superusers", superauth, async (req, res) => {
+router.get("/superusers", superauth,log, async (req, res) => {
     res.status(200).send(req.superuser)
 });
 
 //Logout SuperUser
-router.post('/superuser/logout',superauth,async(req,res)=>{
+router.post('/superuser/logout',superauth,log,async(req,res)=>{
   try {
     // Get the current user from the authentication middleware
     const currsuperuser = req.superuser; // Retrieve the user from the auth middleware
@@ -169,7 +170,7 @@ console.error('Error deleting user:', error);
 });
 
 // get all the users under superauthenticated superuser 
-
+//Applied pagination here 
 router.get('/myusers',superauth,async(req,res)=>{
     const BossId =req.superuser.id
   
@@ -177,6 +178,7 @@ router.get('/myusers',superauth,async(req,res)=>{
         const myusers = await User.findAll({
         where: {BossId},
     });
+
     res.send(myusers)
     }
     catch(e)

@@ -36,8 +36,8 @@ db.budget.belongsTo(db.user, {foreignKey: 'userId'})
 
 //one to many relationship between user and superuser
 
-db.user.hasMany(db.superuser, {foreignKey: 'userId'})
-db.superuser.belongsTo(db.user, {foreignKey: 'userId'})
+db.superuser.hasMany(db.user, {foreignKey: 'bossId'})
+db.user.belongsTo(db.superuser, {foreignKey: 'bossId'})
 
 sequelize.sync()
   .then(() => {
